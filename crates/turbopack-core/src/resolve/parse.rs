@@ -86,7 +86,7 @@ impl Request {
             Pattern::Constant(ref r) => {
                 if r.is_empty() {
                     Request::Empty
-                } else if r.starts_with('/') {
+                } else if r.starts_with('/') && !r.starts_with("//") {
                     Request::ServerRelative { path: request }
                 } else if r.starts_with('#') {
                     Request::PackageInternal { path: request }
@@ -99,7 +99,8 @@ impl Request {
                     lazy_static! {
                         static ref WINDOWS_PATH: Regex =
                             Regex::new(r"^([A-Za-z]:\\|\\\\)").unwrap();
-                        static ref URI_PATH: Regex = Regex::new(r"^([^/\\]+:)(.+)").unwrap();
+                        static ref URI_PATH: Regex =
+                            Regex::new(r"^((?:\/\/|[^/\\]+:))(.+)").unwrap();
                         static ref MODULE_PATH: Regex =
                             Regex::new(r"^((?:@[^/]+/)?[^/]+)(.*)").unwrap();
                     }
